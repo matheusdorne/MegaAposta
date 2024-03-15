@@ -5,6 +5,7 @@ import modelos.Usuario;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Scanner;
 
 public class Principal {
@@ -12,7 +13,7 @@ public class Principal {
     private Scanner leitura = new Scanner(System.in);
 
     private List<Usuario> usuariosCadastrados = new ArrayList<>();
-    private List<Aposta> usuariosApostas = new ArrayList<>();
+    private static List<Aposta> usuariosApostas = new ArrayList<>();
 
     private static int contadorDeRegistros = 1000;
 
@@ -63,6 +64,9 @@ public class Principal {
     }
 
     private void finalizarApostas() {
+        statusSorteio = 1;
+        Sorteio();
+
 
     }
 
@@ -83,70 +87,74 @@ public class Principal {
     }
 
     private void registrarAposta() {
-        String nome;
-        var usuario = new Usuario();
+        if (statusSorteio == 0) {
+            String nome;
+            var usuario = new Usuario();
 
-        System.out.println("Digite o CPF do apostador: ");
-        var cpf = leitura.nextLine();
-
-
-        if (usuariosCadastrados.stream().anyMatch(u -> u.getCpf().equals(cpf))) {
-            usuario = usuariosCadastrados.stream().filter(u -> u.getCpf().equals(cpf)).findFirst().get();
-            System.out.println("Bem vindo: " + usuario.getNome());
-
-        } else {
-            System.out.println("Digite o nome do apostador: ");
-            nome = leitura.nextLine();
-
-            usuario.setNome(nome);
-            usuario.setCpf(cpf);
-            usuariosCadastrados.add(usuario);
-        }
-
-        System.out.println(""" 
-                \n
-                1 - Aposta Manual 
-                2 - Surpresinha 
-                                
-                Escolha a opção desejada:
-                """);
-        var opcaoAposta = leitura.nextInt();
-        leitura.nextLine();
-
-        List<Integer> numeros = new ArrayList<>();
-
-        if (opcaoAposta == 1) {
-
-            System.out.println("Digite 5 números entre 1 e 50: ");
-            for (int i = 0; i <= 4; i++) {
-                System.out.println((i + 1) + "º Número:");
-                var valor = leitura.nextLine();
+            System.out.println("Digite o CPF do apostador: ");
+            var cpf = leitura.nextLine();
 
 
-                try {
-                    var valorInt = Integer.parseInt(valor);
-                    if ( valorInt >= 1  && valorInt <= 50 ) {
-                        numeros.add(valorInt);
-                    } else {
+            if (usuariosCadastrados.stream().anyMatch(u -> u.getCpf().equals(cpf))) {
+                usuario = usuariosCadastrados.stream().filter(u -> u.getCpf().equals(cpf)).findFirst().get();
+                System.out.println("Bem vindo: " + usuario.getNome());
+
+            } else {
+                System.out.println("Digite o nome do apostador: ");
+                nome = leitura.nextLine();
+
+                usuario.setNome(nome);
+                usuario.setCpf(cpf);
+                usuariosCadastrados.add(usuario);
+            }
+
+            System.out.println(""" 
+                    \n
+                    1 - Aposta Manual 
+                    2 - Surpresinha 
+                                    
+                    Escolha a opção desejada:
+                    """);
+            var opcaoAposta = leitura.nextInt();
+            leitura.nextLine();
+
+            List<Integer> numeros = new ArrayList<>();
+
+            if (opcaoAposta == 1) {
+
+                System.out.println("Digite 5 números entre 1 e 50: ");
+                for (int i = 0; i <= 4; i++) {
+                    System.out.println((i + 1) + "º Número:");
+                    var valor = leitura.nextLine();
+
+
+                    try {
+                        var valorInt = Integer.parseInt(valor);
+                        if (valorInt >= 1 && valorInt <= 50) {
+                            numeros.add(valorInt);
+                        } else {
+                            System.out.println("Valor invalido para aposta!\n");
+                            i--;
+                        }
+                    } catch (NumberFormatException e) {
                         System.out.println("Valor invalido para aposta!\n");
                         i--;
                     }
-                } catch (NumberFormatException e) {
-                    System.out.println("Valor invalido para aposta!\n");
-                    i--;
+
+
                 }
 
 
+                var aposta = geraApostaManual(numeros, usuario);
+                usuariosApostas.add(aposta);
+
+            } else {
+                var aposta = geraApostaAleatoria(usuario);
+                usuariosApostas.add(aposta);
+
             }
-
-
-            var aposta = geraApostaManual(numeros, usuario);
-            usuariosApostas.add(aposta);
-
         } else {
-            var aposta = geraApostaAleatoria(usuario);
-            usuariosApostas.add(aposta);
-
+            System.out.println("Apostas finalizadas! Aguarde o final sorteio!");
         }
 
 
@@ -192,5 +200,75 @@ public class Principal {
 
     }
 
+    public static void Sorteio() {
+        List<Integer> numeros = new ArrayList<>();
 
+        for (int i = 0; i < 5; i++) {
+            var numero = (int) (Math.random() * 50) + 1;
+            if (!numeros.contains(numero)) {
+                numeros.add(numero);
+            } else {
+                i--;
+            }
+
+        }
+
+
+
+        List<Integer> teste = new ArrayList<>();
+        teste.add(1);
+        teste.add(2);
+        teste.add(3);
+        teste.add(4);
+        teste.add(5);
+
+        System.out.println("Números sorteados: " + teste);
+        List<Aposta> vencedores = verificaVencedores(teste);
+
+        int contadorNovosSorteios = 0;
+        while (vencedores.isEmpty() && contadorNovosSorteios != 25) {
+            System.out.println("Nenhum vencedor! Novo sorteio!");
+            System.out.println(contadorNovosSorteios);
+            int novoNumeroSorteio = (int) (Math.random() * 50) + 1;
+            if (!numeros.contains(novoNumeroSorteio)) {
+                numeros.add(novoNumeroSorteio);
+
+            }
+            System.out.println("Números sorteados: " + numeros);
+            vencedores = verificaVencedores(numeros);
+            contadorNovosSorteios++;
+
+        }
+
+        if (vencedores.isEmpty()) {
+            System.out.println("Nenhum vencedor!  Concurso finalizado!");
+            System.out.println("Foram " + contadorNovosSorteios + " sorteios sem vencedores!");
+        } else {
+            System.out.println("Vencedores: " );
+            vencedores.stream().forEach(v -> System.out.println(v.getUsuario().getNome()));
+            System.out.println("\nForam necessários " + contadorNovosSorteios + " sorteios novos para encontrar os vencedores!");
+            for (var vencedor : vencedores) {
+                System.out.println(vencedor.getUsuario().getNome());
+            }
+        }
+
+    }
+
+    public static List<Aposta> verificaVencedores(List<Integer> numeros) {
+        List<Aposta> vencedores = new ArrayList<>();
+        for (var aposta : usuariosApostas) {
+            var acertos = 0;
+            for (var numero : aposta.getNumerosDaAposta()) {
+                if (numeros.contains(numero)) {
+                    acertos++;
+                }
+            }
+            if (acertos == 5) {
+                vencedores.add(aposta);
+            }
+        }
+        return vencedores;
+
+
+    }
 }
