@@ -215,15 +215,15 @@ public class Principal {
 
 
 
-        List<Integer> teste = new ArrayList<>();
-        teste.add(1);
-        teste.add(2);
-        teste.add(3);
-        teste.add(4);
-        teste.add(5);
+//        List<Integer> teste = new ArrayList<>();
+//        teste.add(1);
+//        teste.add(2);
+//        teste.add(3);
+//        teste.add(4);
+//        teste.add(5);
 
-        System.out.println("Números sorteados: " + teste);
-        List<Aposta> vencedores = verificaVencedores(teste);
+        System.out.println("Números sorteados: " +numeros);
+        List<Aposta> vencedores = verificaVencedores(numeros);
 
         int contadorNovosSorteios = 0;
         while (vencedores.isEmpty() && contadorNovosSorteios != 25) {
@@ -245,11 +245,11 @@ public class Principal {
             System.out.println("Foram " + contadorNovosSorteios + " sorteios sem vencedores!");
         } else {
             System.out.println("Vencedores: " );
-            vencedores.stream().forEach(v -> System.out.println(v.getUsuario().getNome()));
+            vencedores.stream().forEach(v -> System.out.println("Nome: " + v.getUsuario().getNome() + " - Registro: " + v.getRegistro() + " - Aposta: " + v.getNumerosDaAposta()));
+
+            if (contadorNovosSorteios != 0)
             System.out.println("\nForam necessários " + contadorNovosSorteios + " sorteios novos para encontrar os vencedores!");
-            for (var vencedor : vencedores) {
-                System.out.println(vencedor.getUsuario().getNome());
-            }
+
         }
 
     }
