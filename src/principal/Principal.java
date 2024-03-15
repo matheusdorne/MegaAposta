@@ -227,16 +227,18 @@ public class Principal {
 
         int contadorNovosSorteios = 0;
         while (vencedores.isEmpty() && contadorNovosSorteios != 25) {
-            System.out.println("Nenhum vencedor! Novo sorteio!");
-            System.out.println(contadorNovosSorteios);
+           // System.out.println("Nenhum vencedor! Novo sorteio!");
+
             int novoNumeroSorteio = (int) (Math.random() * 50) + 1;
             if (!numeros.contains(novoNumeroSorteio)) {
                 numeros.add(novoNumeroSorteio);
-
+                contadorNovosSorteios++;
+            }else {
+                continue;
             }
             System.out.println("Números sorteados: " + numeros);
             vencedores = verificaVencedores(numeros);
-            contadorNovosSorteios++;
+
 
         }
 
@@ -248,7 +250,7 @@ public class Principal {
             vencedores.stream().forEach(v -> System.out.println("Nome: " + v.getUsuario().getNome() + " - Registro: " + v.getRegistro() + " - Aposta: " + v.getNumerosDaAposta()));
 
             if (contadorNovosSorteios != 0)
-            System.out.println("\nForam necessários " + contadorNovosSorteios + " sorteios novos para encontrar os vencedores!");
+            System.out.println("\nForam necessários " + contadorNovosSorteios + " sorteios novos para encontrar o(s) vencedor(es)!");
 
         }
 
