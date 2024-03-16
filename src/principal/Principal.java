@@ -30,6 +30,8 @@ public class Principal {
 
     private static int rodadasSorteio = 0;
 
+    private static boolean acumulou = false;
+
     private static List<Integer> resultadoNumeros = new ArrayList<>();
 
     public void exibeMenu() {
@@ -69,6 +71,13 @@ public class Principal {
     }
 
     private void premiacao() {
+        if (acumulou) {
+            System.out.println("O concurso acumulou! Não houve vencedores!");
+        } else {
+            System.out.println("Prêmio total: " + premioTotal);
+            System.out.println("Número de vencedores: " + vencedoresSorteio.size());
+            System.out.println("Prêmio por vencedor: " + premioTotal / vencedoresSorteio.size());
+        }
 
     }
 
@@ -83,6 +92,8 @@ public class Principal {
 
         if (vencedoresEdicao.isEmpty()) {
             System.out.println("Nenhum vencedor!  Concurso acumulou!");
+            acumulou = true;
+            premioTotal += premioTotal;
         } else {
             System.out.println("Vencedores: \n");
             vencedoresEdicao.stream().forEach(v -> System.out.println("Nome: " + v.getUsuario().getNome() + " - Registro: " + v.getRegistro() + " - Aposta: " + v.getNumerosDaAposta()));
@@ -91,28 +102,25 @@ public class Principal {
             System.out.println("Foram necessárias " + rodadasSorteio + " rodadas para encontrar o(s) vencedor(es)!");
         }
         System.out.println("\nEstatisitcas do concurso: \n");
-        System.out.println("Numero de apostas: " + usuariosApostas.size());
-        System.out.println("Numero vencedores: " + vencedoresEdicao.size());
-        System.out.println("Numero de rodadas: " + rodadasSorteio);
-        System.out.println("\nTodas numeracoes apostadas e :");
+        System.out.println("Número de apostas: " + usuariosApostas.size());
+        System.out.println("Número vencedores: " + vencedoresEdicao.size());
+        System.out.println("Número de rodadas: " + rodadasSorteio);
+        System.out.println("\nTodas numeracoes apostadas e suas ocorrências:");
         List<Integer> numerosApostados = new ArrayList<>();
 
         for (var aposta : usuariosApostas) {
             numerosApostados.addAll(aposta.getNumerosDaAposta());
         }
 
-        //Aqui eu crio um stream para agrupar os números apostados e contar quantas vezes cada um foi apostado
+
         var numerosApostadosOrdenados = numerosApostados.stream()
                 .collect(Collectors.groupingBy(n -> n, Collectors.counting()))
-                //Aqui eu ordeno os números apostados pela quantidade de vezes que foram apostados
                 .entrySet().stream()
-                //Aqui eu crio um stream para ordenar os números apostados pela quantidade de vezes que foram apostados
                 .sorted((n1, n2) -> n2.getValue().compareTo(n1.getValue()))
-                //Aqui eu crio uma lista com os números apostados ordenados
                 .collect(Collectors.toList());
         numerosApostadosOrdenados.stream().forEach(n -> System.out.println("Número: " + n.getKey() + " - Quantidade de apostas: " + n.getValue()));
 
-
+        premioTotal = 0.0;
 
 
     }
@@ -267,6 +275,16 @@ public class Principal {
     }
 
     private void iniciar() {
+        if (statusSorteio != 0) {
+            statusSorteio = 0;
+            edicaoConcurso++;
+            contadorDeRegistros = 1000 * edicaoConcurso;
+            System.out.println("Concurso iniciado! Edição: " + edicaoConcurso);
+            premioTotal = 150000.0;
+        } else {
+            System.out.println("Concurso já iniciado!");
+        }
+
 
 
     }
