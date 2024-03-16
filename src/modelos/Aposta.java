@@ -5,6 +5,7 @@ import java.util.List;
 
 public class Aposta {
 
+    private int edicaoConcurso;
     private int registro;
 
     private Usuario usuario;
@@ -27,11 +28,22 @@ public class Aposta {
         this.registro = registro;
     }
 
+    public int getEdicaoConcurso() {
+        return edicaoConcurso;
+    }
+
+    public void setEdicaoConcurso(int edicaoConcurso) {
+        this.edicaoConcurso = edicaoConcurso;
+    }
+
     public Usuario getUsuario() {
         return usuario;
     }
 
     public void setUsuario(Usuario usuario) {
         this.usuario = usuario;
+    }
+
+    public void setPremio(double premio) {
     }
 }

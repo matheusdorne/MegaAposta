@@ -4,6 +4,7 @@ import java.util.List;
 
 public class Vencedor {
 
+
     private int registro;
     private Usuario usuario;
     private List<Integer> numerosDaAposta;
@@ -17,6 +18,7 @@ public class Vencedor {
     public void setPremio(Double premio) {
         this.premio = premio;
     }
+
 
     public Vencedor (int registro, Usuario usuario, List<Integer> numerosDaAposta) {
         this.registro = registro;
