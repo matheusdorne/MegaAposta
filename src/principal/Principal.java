@@ -15,6 +15,10 @@ public class Principal {
     private List<Usuario> usuariosCadastrados = new ArrayList<>();
     private static List<Aposta> usuariosApostas = new ArrayList<>();
 
+    private static List<Aposta> vencedoresSorteio = new ArrayList<>();
+
+    private Double premioTotal = 150000.0;
+
     private static int contadorDeRegistros = 1000;
 
     private int statusSorteio = 0;
@@ -61,6 +65,8 @@ public class Principal {
 
     private void fimDaApuracao() {
 
+
+
     }
 
     private void finalizarApostas() {
@@ -91,9 +97,19 @@ public class Principal {
             String nome;
             var usuario = new Usuario();
 
-            System.out.println("Digite o CPF do apostador: ");
-            var cpf = leitura.nextLine();
-
+            String tempCPF;
+            while (true) {
+// Coloquei a opção de CPF antes de nome para caso o usuário já esteja cadastrado, não precisar digitar o nome novamente
+                System.out.println("Digite o CPF do apostador (Apenas números): ");
+                tempCPF = leitura.nextLine();
+                //Método para verificar se o CPF tem apenas números e 11 caracteres
+                if (verificaCPF(tempCPF)) {
+                    break;
+                } else {
+                    System.out.println("CPF inválido! Digite novamente!");
+                }
+            }
+            var cpf = tempCPF;
 
             if (usuariosCadastrados.stream().anyMatch(u -> u.getCpf().equals(cpf))) {
                 usuario = usuariosCadastrados.stream().filter(u -> u.getCpf().equals(cpf)).findFirst().get();
@@ -227,7 +243,7 @@ public class Principal {
 
         int contadorNovosSorteios = 0;
         while (vencedores.isEmpty() && contadorNovosSorteios != 25) {
-           // System.out.println("Nenhum vencedor! Novo sorteio!");
+            // System.out.println("Nenhum vencedor! Novo sorteio!");
 
             int novoNumeroSorteio = (int) (Math.random() * 50) + 1;
             if (!numeros.contains(novoNumeroSorteio)) {
@@ -242,17 +258,27 @@ public class Principal {
 
         }
 
-        if (vencedores.isEmpty()) {
-            System.out.println("Nenhum vencedor!  Concurso finalizado!");
-            System.out.println("Foram " + contadorNovosSorteios + " sorteios sem vencedores!");
-        } else {
-            System.out.println("Vencedores: " );
-            vencedores.stream().forEach(v -> System.out.println("Nome: " + v.getUsuario().getNome() + " - Registro: " + v.getRegistro() + " - Aposta: " + v.getNumerosDaAposta()));
-
-            if (contadorNovosSorteios != 0)
-            System.out.println("\nForam necessários " + contadorNovosSorteios + " sorteios novos para encontrar o(s) vencedor(es)!");
+        if (!vencedores.isEmpty()) {
+            for (var vencedor : vencedores) {
+                vencedoresSorteio.add(vencedor);
+            }
 
         }
+
+
+
+
+//        if (vencedores.isEmpty()) {
+//            System.out.println("Nenhum vencedor!  Concurso finalizado!");
+//            System.out.println("Foram " + contadorNovosSorteios + " sorteios sem vencedores!");
+//        } else {
+//            System.out.println("Vencedores: " );
+//            vencedores.stream().forEach(v -> System.out.println("Nome: " + v.getUsuario().getNome() + " - Registro: " + v.getRegistro() + " - Aposta: " + v.getNumerosDaAposta()));
+//
+//            if (contadorNovosSorteios != 0)
+//                System.out.println("\nForam necessários " + contadorNovosSorteios + " sorteios novos para encontrar o(s) vencedor(es)!");
+//
+//        }
 
     }
 
@@ -273,4 +299,15 @@ public class Principal {
 
 
     }
+
+    public static boolean verificaCPF(String CPF) {
+        if (CPF.length() == 11 && CPF.matches("[0-9]*")) {
+            return true;
+        } else {
+            return false;
+        }
+
+
+    }
+
 }
