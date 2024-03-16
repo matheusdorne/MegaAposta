@@ -36,6 +36,8 @@ public class Principal {
 
     public void exibeMenu() {
         System.out.println("Bem Vindo Ao MEGA APOSTA!");
+        System.out.println("Edição do concurso: " + edicaoConcurso);
+        System.out.println("Prêmio total: " + premioTotal);
         int opcao = -1;
         while (opcao != 0) {
             var menu = """ 
@@ -64,6 +66,7 @@ public class Principal {
                 case 5 -> fimDaApuracao();
                 case 6 -> premiacao();
                 case 0 -> System.exit(0);
+                default -> System.out.println("Opção inválida!");
             }
         }
 
@@ -73,6 +76,7 @@ public class Principal {
     private void premiacao() {
         if (acumulou) {
             System.out.println("O concurso acumulou! Não houve vencedores!");
+            System.out.println("Acumulado: R$" + premioTotal);
         } else {
             System.out.println("Prêmio total: " + premioTotal);
             System.out.println("Número de vencedores: " + vencedoresSorteio.size());
@@ -93,7 +97,6 @@ public class Principal {
         if (vencedoresEdicao.isEmpty()) {
             System.out.println("Nenhum vencedor!  Concurso acumulou!");
             acumulou = true;
-            premioTotal += premioTotal;
         } else {
             System.out.println("Vencedores: \n");
             vencedoresEdicao.stream().forEach(v -> System.out.println("Nome: " + v.getUsuario().getNome() + " - Registro: " + v.getRegistro() + " - Aposta: " + v.getNumerosDaAposta()));
@@ -105,7 +108,7 @@ public class Principal {
         System.out.println("Número de apostas: " + usuariosApostas.size());
         System.out.println("Número vencedores: " + vencedoresEdicao.size());
         System.out.println("Número de rodadas: " + rodadasSorteio);
-        System.out.println("\nTodas numeracoes apostadas e suas ocorrências:");
+        System.out.println("\nTodas numerações apostadas e suas ocorrências:");
         List<Integer> numerosApostados = new ArrayList<>();
 
         for (var aposta : usuariosApostas) {
@@ -119,8 +122,6 @@ public class Principal {
                 .sorted((n1, n2) -> n2.getValue().compareTo(n1.getValue()))
                 .collect(Collectors.toList());
         numerosApostadosOrdenados.stream().forEach(n -> System.out.println("Número: " + n.getKey() + " - Quantidade de apostas: " + n.getValue()));
-
-        premioTotal = 0.0;
 
 
     }
@@ -275,16 +276,22 @@ public class Principal {
     }
 
     private void iniciar() {
-        if (statusSorteio != 0) {
+        if (statusSorteio == 1) {
             statusSorteio = 0;
             edicaoConcurso++;
             contadorDeRegistros = 1000 * edicaoConcurso;
+            usuariosApostas.clear();
+
             System.out.println("Concurso iniciado! Edição: " + edicaoConcurso);
-            premioTotal = 150000.0;
+            System.out.println("Prêmio total: " + premioTotal);
+            if (acumulou) {
+                premioTotal += 150000.0;
+            } else {
+                premioTotal = 150000.0;
+            }
         } else {
             System.out.println("Concurso já iniciado!");
         }
-
 
 
     }
@@ -320,7 +327,7 @@ public class Principal {
             if (!numeros.contains(novoNumeroSorteio)) {
                 numeros.add(novoNumeroSorteio);
                 contadorNovosSorteios++;
-            }else {
+            } else {
                 continue;
             }
             //System.out.println("Números sorteados: " + numeros);
@@ -342,8 +349,8 @@ public class Principal {
 
         System.out.println("Sorteio realizado!");
 
-       resultadoNumeros = numeros;
-       rodadasSorteio = contadorNovosSorteios;
+        resultadoNumeros = numeros;
+        rodadasSorteio = contadorNovosSorteios;
 
         // Esse stream verifica se existe vencedores dessa edição do concurso
 
@@ -381,7 +388,7 @@ public class Principal {
     }
 
     public static boolean verificaCPF(String CPF) {
-        return  true;
+        return true;
 //        if (CPF.length() == 11 && CPF.matches("[0-9]*")) {
 //            return true;
 //        } else {
