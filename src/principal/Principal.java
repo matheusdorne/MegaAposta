@@ -18,6 +18,8 @@ public class Principal {
     private static List<Aposta> vencedoresSorteio = new ArrayList<>();
 
     private Double premioTotal = 150000.0;
+    
+    private int numeroDoSorteio = 1;
 
     private static int contadorDeRegistros = 1000;
 
