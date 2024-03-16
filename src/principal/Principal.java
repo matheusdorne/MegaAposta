@@ -388,12 +388,12 @@ public class Principal {
     }
 
     public static boolean verificaCPF(String CPF) {
-        return true;
-//        if (CPF.length() == 11 && CPF.matches("[0-9]*")) {
-//            return true;
-//        } else {
-//            return false;
-//        }
+
+        if (CPF.length() == 11 && CPF.matches("[0-9]*")) {
+            return true;
+        } else {
+            return false;
+        }
 
 
     }
