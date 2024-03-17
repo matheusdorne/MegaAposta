@@ -74,6 +74,13 @@ public class Principal {
     }
 
     private void premiacao() {
+
+        if (statusSorteio != 2) {
+            System.out.println("Apostas ainda não finalizadas! Aguarde o final do sorteio!");
+            return;
+        }
+        //Verificação para evitar que siga a ordem de apuração
+
         if (acumulou) {
             System.out.println("O concurso acumulou! Não houve vencedores!");
             System.out.println("Acumulado: R$" + premioTotal);
@@ -86,6 +93,13 @@ public class Principal {
     }
 
     private void fimDaApuracao() {
+
+        if (statusSorteio == 0) {
+            System.out.println("Apostas ainda não finalizadas! Aguarde o final do sorteio!");
+            return;
+        }
+
+        statusSorteio = 2;
 
         System.out.println("Números sorteados: " + resultadoNumeros);
 
@@ -138,6 +152,11 @@ public class Principal {
     }
 
     private void finalizarApostas() {
+        if (statusSorteio == 1) {
+            System.out.println("Apostas já foram finalizadas! Aguarde o final do sorteio!");
+            return;
+        }
+        //Evita que seja finalizado novamente
 
         System.out.println("Você deseja finalizar as apostas e executar o sorteio? (S/N)");
         var opcao = leitura.nextLine();
@@ -157,6 +176,7 @@ public class Principal {
 
             for (var registro : aposta.getNumerosDaAposta()) {
                 linhaNumero += registro + " ";
+                //Utilizado um laço para imprimir os números da aposta no formato xx xx xx xx xx
 
             }
             System.out.println("Usuário: " + aposta.getUsuario().getNome() + " Registro: " + aposta.getRegistro() + " - " + linhaNumero);
