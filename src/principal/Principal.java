@@ -115,13 +115,20 @@ public class Principal {
             numerosApostados.addAll(aposta.getNumerosDaAposta());
         }
 
+        List<Integer> listaUnica = numerosApostados.stream().distinct().collect(Collectors.toList());
+        System.out.println("Números apostados: " + numerosApostados);
 
-        var numerosApostadosOrdenados = numerosApostados.stream()
-                .collect(Collectors.groupingBy(n -> n, Collectors.counting()))
-                .entrySet().stream()
-                .sorted((n1, n2) -> n2.getValue().compareTo(n1.getValue()))
-                .collect(Collectors.toList());
-        numerosApostadosOrdenados.stream().forEach(n -> System.out.println("Número: " + n.getKey() + " - Quantidade de apostas: " + n.getValue()));
+//        for (var aposta : usuariosApostas) {
+//            numerosApostados.addAll(aposta.getNumerosDaAposta());
+//        }
+//
+//
+//        var numerosApostadosOrdenados = numerosApostados.stream()
+//                .collect(Collectors.groupingBy(n -> n, Collectors.counting()))
+//                .entrySet().stream()
+//                .sorted((n1, n2) -> n2.getValue().compareTo(n1.getValue()))
+//                .collect(Collectors.toList());
+//        numerosApostadosOrdenados.stream().forEach(n -> System.out.println("Número: " + n.getKey() + " - Quantidade de apostas: " + n.getValue()));
 
 
     }
@@ -177,8 +184,16 @@ public class Principal {
                 System.out.println("Bem vindo: " + usuario.getNome());
 
             } else {
-                System.out.println("Digite o nome do apostador: ");
-                nome = leitura.nextLine();
+                //Verifica se o campo nome esta vazio
+                while (true) {
+                    System.out.println("Digite o nome do apostador: ");
+                    nome = leitura.nextLine();
+                    if (nome.length() > 0) {
+                        break;
+                    } else {
+                        System.out.println("Nome inválido! Digite novamente!");
+                    }
+                }
 
                 usuario.setNome(nome);
                 usuario.setCpf(cpf);
