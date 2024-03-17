@@ -37,7 +37,7 @@ public class Principal {
     public void exibeMenu() {
         System.out.println("Bem Vindo Ao MEGA APOSTA!");
         System.out.println("Edição do concurso: " + edicaoConcurso);
-        System.out.println("Prêmio total: " + premioTotal);
+        System.out.println("Prêmio total: R$" + premioTotal);
         int opcao = -1;
         while (opcao != 0) {
             var menu = """ 
@@ -78,7 +78,7 @@ public class Principal {
             System.out.println("O concurso acumulou! Não houve vencedores!");
             System.out.println("Acumulado: R$" + premioTotal);
         } else {
-            System.out.println("Prêmio total: " + premioTotal);
+            System.out.println("Prêmio total: R$ " + premioTotal);
             System.out.println("Número de vencedores: " + vencedoresSorteio.size());
             System.out.println("Prêmio por vencedor: " + premioTotal / vencedoresSorteio.size());
         }
@@ -89,7 +89,7 @@ public class Principal {
 
         System.out.println("Números sorteados: " + resultadoNumeros);
 
-        // Esse stream verifica se existe vencedores dessa edição do concurso
+        // Esse stream verifica se existem vencedores dessa edição do concurso
         List<Aposta> vencedoresEdicao = vencedoresSorteio.stream()
                 .filter(v -> v.getEdicaoConcurso() == edicaoConcurso)
                 .collect(Collectors.toList());
@@ -114,21 +114,25 @@ public class Principal {
         for (var aposta : usuariosApostas) {
             numerosApostados.addAll(aposta.getNumerosDaAposta());
         }
-
-        List<Integer> listaUnica = numerosApostados.stream().distinct().collect(Collectors.toList());
-        System.out.println("Números apostados: " + numerosApostados);
-
-//        for (var aposta : usuariosApostas) {
-//            numerosApostados.addAll(aposta.getNumerosDaAposta());
+//        Primeiro modelo de estatísticas, porém não ordenava corretamente
+//        List<Integer> listaUnica = numerosApostados.stream().distinct().collect(Collectors.toList());
+//        System.out.println("Números apostados: " + numerosApostados);
+//
+//        for (var numero : listaUnica) {
+//            System.out.println("Número: " + numero + " - Ocorrências: " + numerosApostados.stream().filter(n -> n.equals(numero)).count());
 //        }
-//
-//
-//        var numerosApostadosOrdenados = numerosApostados.stream()
-//                .collect(Collectors.groupingBy(n -> n, Collectors.counting()))
-//                .entrySet().stream()
-//                .sorted((n1, n2) -> n2.getValue().compareTo(n1.getValue()))
-//                .collect(Collectors.toList());
-//        numerosApostadosOrdenados.stream().forEach(n -> System.out.println("Número: " + n.getKey() + " - Quantidade de apostas: " + n.getValue()));
+
+
+
+        // Segundo modelo de estatísticas, ordena corretamente
+        // A partir de um fluxo gerando um mapa com chave valor, sendo a chave o número apostado e o valor a quantidade de vezes que ele foi apostado
+        // Ordena o mapa pelo valor e coleta em uma lista
+        var numerosApostadosOrdenados = numerosApostados.stream()
+                .collect(Collectors.groupingBy(n -> n, Collectors.counting()))
+                .entrySet().stream()
+                .sorted((n1, n2) -> n2.getValue().compareTo(n1.getValue()))
+                .collect(Collectors.toList());
+        numerosApostadosOrdenados.stream().forEach(n -> System.out.println("Número: " + n.getKey() + " - Quantidade de apostas: " + n.getValue()));
 
 
     }
@@ -167,7 +171,7 @@ public class Principal {
 
             String tempCPF;
             while (true) {
-// Coloquei a opção de CPF antes de nome para caso o usuário já esteja cadastrado, não precisar digitar o nome novamente
+// Coloquei a opção de CPF antes de nome para caso o utilizador já esteja cadastrado, não precisar digitar o nome novamente
                 System.out.println("Digite o CPF do apostador (Apenas números): ");
                 tempCPF = leitura.nextLine();
                 //Método para verificar se o CPF tem apenas números e 11 caracteres
@@ -188,14 +192,17 @@ public class Principal {
                 while (true) {
                     System.out.println("Digite o nome do apostador: ");
                     nome = leitura.nextLine();
-                    if (nome.length() > 0) {
+                    if (nome.length() > 0 && !nome.trim().isEmpty()) {
+                        //Evita que sejá digiado um nome vazio
+                        // Utilizo o trim para remover espaços em branco no início e no final do nome
+                        // evitando que alguém se registre como " " por exemplo
                         break;
                     } else {
                         System.out.println("Nome inválido! Digite novamente!");
                     }
                 }
+                usuario.setNome(nome.trim());
 
-                usuario.setNome(nome);
                 usuario.setCpf(cpf);
                 usuariosCadastrados.add(usuario);
             }
@@ -222,8 +229,18 @@ public class Principal {
 
                     try {
                         var valorInt = Integer.parseInt(valor);
+                        //Tentamos converter o valor para inteiro, usei o try catch para caso o valor não seja um inteiro
+
                         if (valorInt >= 1 && valorInt <= 50) {
-                            numeros.add(valorInt);
+                            //Verifica se esta entre 1 e 50
+
+                            if (!numeros.contains(valorInt)) {
+                                //Esse if verifica se o número já foi escolhido
+                                numeros.add(valorInt);
+                            } else {
+                                System.out.println("Número já escolhido! Digite outro número!");
+                                i--;
+                            }
                         } else {
                             System.out.println("Valor invalido para aposta!\n");
                             i--;
@@ -259,7 +276,7 @@ public class Principal {
         //Cria um arraylist de inteiros para ser adicionado a aposta posteriormente
         for (int i = 0; i < 5; i++) {
             var numero = (int) (Math.random() * 50) + 1;
-            // Como o Math.Random * 50 gera um número entre 0 e 49, é necessário somar 1 para que o número gerado seja entre 1 e 60
+            // Como o Math.Random * 50 gera um número entre 0 e 49, é necessário somar 1 para que o número gerado seja entre 1 e 50
             if (!numeros.contains(numero)) {
                 numeros.add(numero);
             } else {
@@ -276,7 +293,7 @@ public class Principal {
     }
 
     private static Aposta geraApostaManual(List<Integer> numerosAposta, Usuario usuario) {
-        // Aqui recebemos os números escolhidos já verificados e o usuário para gerar a aposta
+        // Aqui recebemos os números escolhidos já verificados e o utilizador para gerar a aposta
         var aposta = new Aposta();
         aposta.setRegistro(contadorDeRegistros++);
         aposta.setNumerosDaAposta(List.of(
@@ -285,6 +302,7 @@ public class Principal {
                 Integer.parseInt(String.valueOf(numerosAposta.get(2))),
                 Integer.parseInt(String.valueOf(numerosAposta.get(3))),
                 Integer.parseInt(String.valueOf(numerosAposta.get(4)))));
+        //Cria a lista com as posições de 1 a 4 com os números escolhidos
         aposta.setUsuario(usuario);
         aposta.setEdicaoConcurso(edicaoConcurso);
         return aposta;
@@ -292,13 +310,14 @@ public class Principal {
 
     private void iniciar() {
         if (statusSorteio == 1) {
+            // Ajustamos os contadores criados para um próximo concurso
             statusSorteio = 0;
             edicaoConcurso++;
             contadorDeRegistros = 1000 * edicaoConcurso;
             usuariosApostas.clear();
 
             System.out.println("Concurso iniciado! Edição: " + edicaoConcurso);
-            System.out.println("Prêmio total: " + premioTotal);
+            System.out.println("Prêmio total: R$" + premioTotal);
             if (acumulou) {
                 premioTotal += 150000.0;
             } else {
@@ -315,6 +334,8 @@ public class Principal {
         List<Integer> numeros = new ArrayList<>();
 
         for (int i = 0; i < 5; i++) {
+            // Gera 5 números aleatórios entre 1 e 50 validando se já repetiram ou não
+            // Posteriormente adiciona na lista de números sorteados caso não vencedores
             var numero = (int) (Math.random() * 50) + 1;
             if (!numeros.contains(numero)) {
                 numeros.add(numero);
@@ -324,7 +345,7 @@ public class Principal {
 
         }
 
-
+        // Teste para verificar se o método de verificação de vencedores está funcionando
 //        List<Integer> teste = new ArrayList<>();
 //        teste.add(1);
 //        teste.add(2);
@@ -336,13 +357,19 @@ public class Principal {
 
         int contadorNovosSorteios = 0;
         while (vencedores.isEmpty() && contadorNovosSorteios != 25) {
+            // Se não houver vencedores, o sorteio é repetido até 25 vezes
+
             // System.out.println("Nenhum vencedor! Novo sorteio!");
 
             int novoNumeroSorteio = (int) (Math.random() * 50) + 1;
+            // Gera um novo número aleatório
             if (!numeros.contains(novoNumeroSorteio)) {
+                // Se o número gerado não estiver na lista de números sorteados, ele é adicionado
+                // para evitar repetições
                 numeros.add(novoNumeroSorteio);
                 contadorNovosSorteios++;
             } else {
+                // Se o número gerado já estiver na lista, o laço continua
                 continue;
             }
             //System.out.println("Números sorteados: " + numeros);
@@ -352,6 +379,7 @@ public class Principal {
         }
 
         if (!vencedores.isEmpty()) {
+            // Se houver vencedores, o prêmio é dividido entre eles
             for (var vencedor : vencedores) {
                 var premio = premioTotal / vencedores.size();
                 vencedor.setPremio(premio);
@@ -359,6 +387,7 @@ public class Principal {
             }
 
         } else {
+            // Se não houver vencedores, o prêmio acumula para o próximo concurso
             premioTotal += premioTotal;
         }
 
@@ -367,7 +396,7 @@ public class Principal {
         resultadoNumeros = numeros;
         rodadasSorteio = contadorNovosSorteios;
 
-        // Esse stream verifica se existe vencedores dessa edição do concurso
+        // Esse stream verifica se existem vencedores dessa edição do concurso
 
 
 //        if (vencedores.isEmpty()) {
@@ -385,6 +414,8 @@ public class Principal {
     }
 
     public static List<Aposta> verificaVencedores(List<Integer> numeros) {
+        //Método utiliza laços para verificar se os números sorteados estão presentes nas apostas
+        //e retorna uma lista com as apostas vencedoras
         List<Aposta> vencedores = new ArrayList<>();
         for (var aposta : usuariosApostas) {
             var acertos = 0;
@@ -403,7 +434,8 @@ public class Principal {
     }
 
     public static boolean verificaCPF(String CPF) {
-
+        //Método para verificar se o CPF tem apenas números e 11 caracteres
+        //Decidi não usar validaçao de CPF, para facilitar os testes
         if (CPF.length() == 11 && CPF.matches("[0-9]*")) {
             return true;
         } else {
