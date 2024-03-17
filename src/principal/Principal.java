@@ -152,6 +152,12 @@ public class Principal {
     }
 
     private void finalizarApostas() {
+        if (usuariosApostas.isEmpty()) {
+            System.out.println("Não há apostas para finalizar!");
+            return;
+        }
+        //Verifica se existem apostas para finalizar o sorteio
+
         if (statusSorteio == 1) {
             System.out.println("Apostas já foram finalizadas! Aguarde o final do sorteio!");
             return;
