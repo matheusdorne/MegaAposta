@@ -445,7 +445,7 @@ public class Principal {
         List<Aposta> vencedores = new ArrayList<>();
         for (var aposta : usuariosApostas) {
             var acertos = 0;
-            for (var numero : aposta.getNumerosDaAposta()) {
+            for (   var numero : aposta.getNumerosDaAposta()) {
                 if (numeros.contains(numero)) {
                     acertos++;
                 }
