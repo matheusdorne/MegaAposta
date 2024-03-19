@@ -22,13 +22,14 @@ public class Principal {
 
     private static Double premioTotal = 150000.0;
 
-    private static int edicaoConcurso = 1;
+    private static int edicaoConcurso = 0;
     //Contador para gerar a edição do concurso, começa em 1 e é incrementado a cada concurso
 
     private static int contadorDeRegistros = 1000;
     //Contador para gerar o registro da aposta, começa em 1000 e é incrementado a cada aposta
 
-    private int statusSorteio = 0;
+    private int statusSorteio = -1;
+    //-1 - Concurso não iniciado
     // 0 - Apostas abertas
     // 1 - Apostas finalizadas e sorteio em andamento
     // 2 - Sorteio finalizado
@@ -44,8 +45,6 @@ public class Principal {
 
     public void exibeMenu() {
         System.out.println("Bem Vindo Ao MEGA APOSTA!");
-        System.out.println("Edição do concurso: " + edicaoConcurso);
-        System.out.println("Prêmio total: R$" + premioTotal);
 
         while (true) {
             var menu = """ 
@@ -82,7 +81,7 @@ public class Principal {
     }
 
     private void iniciar() {
-        if (statusSorteio == 1) {
+        if (statusSorteio == 2 || statusSorteio == -1 ) {
             // Ajustamos os contadores criados para um próximo concurso
             statusSorteio = 0;
             edicaoConcurso++;
@@ -96,6 +95,7 @@ public class Principal {
             } else {
                 premioTotal = 150000.0;
             }
+            //Ajusta o premio total para o próximo concurso
         } else {
             System.out.println("Concurso já iniciado!");
         }
@@ -104,6 +104,11 @@ public class Principal {
     }
 
     private void registrarAposta() {
+
+        if (statusSorteio == -1) {
+            System.out.println("Concurso não iniciado! Aguarde o início do concurso!");
+            return;
+        }
         if (statusSorteio == 0) {
             String nome;
             var usuario = new Usuario();
@@ -225,6 +230,11 @@ public class Principal {
     }
 
     private void finalizarApostas() {
+        if (statusSorteio == -1) {
+            System.out.println("Concurso não iniciado! Aguarde o início do concurso!");
+            return;
+        }
+
         if (usuariosApostas.isEmpty()) {
             System.out.println("Não há apostas para finalizar!");
             return;
@@ -248,6 +258,11 @@ public class Principal {
     }
 
     private void fimDaApuracao() {
+
+        if (statusSorteio == -1) {
+            System.out.println("Concurso não iniciado! Aguarde o início do concurso!");
+            return;
+        }
 
         if (statusSorteio == 0) {
             System.out.println("Apostas ainda não finalizadas! Aguarde o final do sorteio!");
@@ -306,6 +321,10 @@ public class Principal {
     }
 
     private void premiacao() {
+        if (statusSorteio == -1) {
+            System.out.println("Concurso não iniciado! Aguarde o início do concurso!");
+            return;
+        }
 
         if (statusSorteio != 2) {
             System.out.println("Apostas ainda não finalizadas! Aguarde o final do sorteio!");
