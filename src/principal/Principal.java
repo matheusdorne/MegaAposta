@@ -55,6 +55,7 @@ public class Principal {
                     4 - [FINALIZAR APOSTAS E EXECUTAR O SORTEIO]
                     5 - [FIM DA APURAÇÃO]
                     6 - [PREMIAÇÃO]
+                    7 - [VENCEDORES]
                                     
                     0 - [SAIR]
                                     
@@ -72,6 +73,7 @@ public class Principal {
                 case 4 -> finalizarApostas();
                 case 5 -> fimDaApuracao();
                 case 6 -> premiacao();
+                case 7 -> listaVencedores();
                 case 0 -> System.exit(0);
                 default -> System.out.println("Opção inválida!");
             }
@@ -80,6 +82,7 @@ public class Principal {
 
     }
 
+
     private void iniciar() {
         if (statusSorteio == 2 || statusSorteio == -1 ) {
             // Ajustamos os contadores criados para um próximo concurso
@@ -87,15 +90,10 @@ public class Principal {
             edicaoConcurso++;
             contadorDeRegistros = 1000 * edicaoConcurso;
             usuariosApostas.clear();
+            acumulou = false;
 
             System.out.println("Concurso iniciado! Edição: " + edicaoConcurso);
             System.out.println("Prêmio total: R$" + premioTotal);
-            if (acumulou) {
-                premioTotal += 150000.0;
-            } else {
-                premioTotal = 150000.0;
-            }
-            //Ajusta o premio total para o próximo concurso
         } else {
             System.out.println("Concurso já iniciado!");
         }
@@ -106,7 +104,7 @@ public class Principal {
     private void registrarAposta() {
 
         if (statusSorteio == -1) {
-            System.out.println("Concurso não iniciado! Aguarde o início do concurso!");
+            System.out.println("Concurso não iniciado!");
             return;
         }
         if (statusSorteio == 0) {
@@ -124,6 +122,7 @@ public class Principal {
                 } else {
                     System.out.println("CPF inválido! Digite novamente!");
                 }
+
             }
             var cpf = tempCPF;
 
@@ -200,10 +199,15 @@ public class Principal {
 
                 var aposta = geraApostaManual(numeros, usuario);
                 usuariosApostas.add(aposta);
+                System.out.println("Aposta gerada com sucesso!");
+                System.out.println(aposta.getNumerosDaAposta());
 
             } else {
                 var aposta = geraApostaAleatoria(usuario);
                 usuariosApostas.add(aposta);
+
+                System.out.println("Aposta gerada com sucesso!");
+                System.out.println(aposta.getNumerosDaAposta());
 
             }
         } else {
@@ -224,14 +228,14 @@ public class Principal {
                 //Utilizado um laço para imprimir os números da aposta no formato xx xx xx xx xx
 
             }
-            System.out.println("Usuário: " + aposta.getUsuario().getNome() + " Registro: " + aposta.getRegistro() + " - " + linhaNumero);
+            System.out.println(aposta.getEdicaoConcurso() + " Usuário: " + aposta.getUsuario().getNome() + " Registro: " + aposta.getRegistro() + " - " + linhaNumero);
         }
 
     }
 
     private void finalizarApostas() {
         if (statusSorteio == -1) {
-            System.out.println("Concurso não iniciado! Aguarde o início do concurso!");
+            System.out.println("Concurso não iniciado!");
             return;
         }
 
@@ -260,7 +264,7 @@ public class Principal {
     private void fimDaApuracao() {
 
         if (statusSorteio == -1) {
-            System.out.println("Concurso não iniciado! Aguarde o início do concurso!");
+            System.out.println("Concurso não iniciado!");
             return;
         }
 
@@ -284,8 +288,8 @@ public class Principal {
         } else {
             System.out.println("Vencedores: \n");
             vencedoresEdicao.forEach(v -> System.out.println("Nome: " + v.getUsuario().getNome() + " - Registro: " + v.getRegistro() + " - Aposta: " + v.getNumerosDaAposta()));
-            System.out.println("\nPrêmio total: " + premioTotal);
-            System.out.println("Prêmio por vencedor: " + premioTotal / vencedoresEdicao.size());
+            System.out.println("\nPrêmio total: R$ " + premioTotal);
+            System.out.println("Prêmio por vencedor: R$ " + premioTotal / vencedoresEdicao.size());
             System.out.println("Foram necessárias " + rodadasSorteio + " rodadas para encontrar o(s) vencedor(es)!");
         }
         System.out.println("\nEstatisitcas do concurso: \n");
@@ -322,7 +326,7 @@ public class Principal {
 
     private void premiacao() {
         if (statusSorteio == -1) {
-            System.out.println("Concurso não iniciado! Aguarde o início do concurso!");
+            System.out.println("Concurso não iniciado!");
             return;
         }
 
@@ -338,10 +342,24 @@ public class Principal {
         } else {
             System.out.println("Prêmio total: R$ " + premioTotal);
             System.out.println("Número de vencedores: " + vencedoresSorteio.size());
-            System.out.println("Prêmio por vencedor: " + premioTotal / vencedoresSorteio.size());
+            System.out.println("Prêmio por vencedor: R$ " + premioTotal / vencedoresSorteio.size());
         }
 
     }
+
+    private void listaVencedores() {
+
+        //Verificação para evitar que siga a ordem de apuração
+
+        if (vencedoresSorteio.isEmpty()) {
+            System.out.println("Não vencedores até o momento! Continua apostando!");
+        } else {
+            System.out.println("Vencedores: \n");
+            vencedoresSorteio.forEach(v -> System.out.println("Concurso: "+ v.getEdicaoConcurso() + " Nome: " + v.getUsuario().getNome()  + " - Registro: " + v.getRegistro() + " - Aposta: " + v.getNumerosDaAposta()));
+
+        }
+    }
+
 
 
     private static Aposta geraApostaAleatoria(Usuario usuario) {
@@ -399,7 +417,7 @@ public class Principal {
         }
 
         // Teste para verificar se o método de verificação de vencedores está funcionando
-//        List<Integer> teste = new ArrayList<>();
+        List<Integer> teste = new ArrayList<>();
 //        teste.add(1);
 //        teste.add(2);
 //        teste.add(3);
@@ -412,7 +430,7 @@ public class Principal {
         while (vencedores.isEmpty() && contadorNovosSorteios != 25) {
             // Se não houver vencedores, o sorteio é repetido até 25 vezes
 
-            // System.out.println("Nenhum vencedor! Novo sorteio!");
+//             System.out.println("Nenhum vencedor! Novo sorteio!");
 
             int novoNumeroSorteio = (int) (Math.random() * 50) + 1;
             // Gera um novo número aleatório
@@ -425,7 +443,7 @@ public class Principal {
                 // Se o número gerado já estiver na lista, o laço continua
                 continue;
             }
-            //System.out.println("Números sorteados: " + numeros);
+//            System.out.println("Números sorteados: " + numeros);
             vencedores = verificaVencedores(numeros);
 
 
@@ -436,12 +454,13 @@ public class Principal {
             for (var vencedor : vencedores) {
                 var premio = premioTotal / vencedores.size();
                 vencedor.setPremio(premio);
+                vencedor.setEdicaoConcurso(edicaoConcurso);
                 vencedoresSorteio.add(vencedor);
             }
 
         } else {
             // Se não houver vencedores, o prêmio acumula para o próximo concurso
-            premioTotal += premioTotal;
+            premioTotal += 150000;
         }
 
         System.out.println("Sorteio realizado!");
@@ -487,6 +506,7 @@ public class Principal {
     }
 
     public static boolean verificaCPF(String CPF) {
+
         //Método para verificar se o CPF tem apenas números e 11 caracteres
         //Decidi não usar validaçao de CPF, para facilitar os testes
         return (CPF.length() == 11) && CPF.matches("[0-9]*");
