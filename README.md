@@ -1,11 +1,14 @@
-# MegaAposta 
+# MegaAposta  
+
+JAVA 18
 
 Instruções para rodar o projeto: 
 
-1 - Selecione a classe principal (Main.java) e execute o projeto. 
-2 - O projeto irá rodar e exibirá um menu com as opções de apostas. 
-3 - Selecione a opção desejada e siga as instruções.
-4 - Ao final, o programa irá exibir o resultado da aposta.
+1 - Abra o pasta MegaAposta em alguma IDE JAVA (Eclipse, IntelliJ, NetBeans, etc).
+2 - Selecione a classe principal (Main.java) e execute o projeto. 
+3 - O projeto irá rodar e exibirá um menu com as opções de apostas. 
+4 - Selecione a opção desejada e siga as instruções.
+5 - Ao final, o programa irá exibir o resultado da aposta.
 
 Instrução das opções:  
 
